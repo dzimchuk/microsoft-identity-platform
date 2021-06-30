@@ -1,3 +1,5 @@
+[Official samples](https://github.com/Azure-Samples/active-directory-aspnetcore-webapp-openidconnect-v2)
+
 ## WebAppSignIn
 
 - [Overview](https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-web-app-sign-user-overview?tabs=aspnetcore)

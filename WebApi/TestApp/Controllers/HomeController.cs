@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
-using System;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
@@ -18,13 +20,18 @@ namespace TestApp.Controllers
         private readonly ITokenAcquisition tokenAcquisition;
         private readonly IDownstreamWebApi downstreamWebApi;
 
-        public object JsonConvert { get; private set; }
+        private readonly string[] scopes = new[] { "user.read" };
 
-        public HomeController(ILogger<HomeController> logger, ITokenAcquisition tokenAcquisition, IDownstreamWebApi downstreamWebApi)
+        public HomeController(ILogger<HomeController> logger,
+                              ITokenAcquisition tokenAcquisition,
+                              IDownstreamWebApi downstreamWebApi,
+                              IConfiguration configuration)
         {
             _logger = logger;
             this.tokenAcquisition = tokenAcquisition;
             this.downstreamWebApi = downstreamWebApi;
+
+            scopes = configuration.GetValue<string>("TestService:Scopes")?.Split(' ');
         }
 
         public IActionResult Index()
@@ -35,17 +42,17 @@ namespace TestApp.Controllers
         [Authorize]
         public async Task<IActionResult> Privacy()
         {
-            //await CallApiUsingManualTokenAcquisition();
-            await CallApiUsingHelper();
+            //var result = await CallApiUsingManualTokenAcquisition();
+            var result = await CallApiUsingHelper();
 
-            return View();
+            return View(result);
         }
 
-        private async Task CallApiUsingManualTokenAcquisition()
+        private async Task<IEnumerable<WeatherForecast>> CallApiUsingManualTokenAcquisition()
         {
             // Acquire the access token.
-            string[] scopes = new string[] { "access_as_user" };
             string accessToken = await tokenAcquisition.GetAccessTokenForUserAsync(scopes); // MsalUiRequiredException
+            // MsalUiRequiredException: No account or login hint was passed to the AcquireTokenSilent call.
 
             // Use the access token to call a protected web API.
             HttpClient client = new HttpClient();
@@ -57,23 +64,31 @@ namespace TestApp.Controllers
             {
                 var content = await response.Content.ReadAsStringAsync();
 
-                //dynamic me = JsonConvert.DeserializeObject(content);
-                //ViewData["Me"] = me;
+                var forcast = JsonConvert.DeserializeObject<IEnumerable<WeatherForecast>>(content);
+                return forcast;
             }
 
-            Console.WriteLine();
+            return null;
         }
 
-        private async Task CallApiUsingHelper()
+        private async Task<IEnumerable<WeatherForecast>> CallApiUsingHelper()
         {
-            var value = await downstreamWebApi.CallWebApiForUserAsync(
+            var response = await downstreamWebApi.CallWebApiForUserAsync(
                         "TestService",
                         options =>
                         {
                             options.RelativePath = $"WeatherForecast";
                         });
 
-            Console.WriteLine();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                var forcast = JsonConvert.DeserializeObject<IEnumerable<WeatherForecast>>(content);
+                return forcast;
+            }
+
+            return null;
         }
 
         [AllowAnonymous]
