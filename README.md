@@ -23,6 +23,9 @@
 - [Code configuration](https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-protected-web-api-app-configuration)
 - [Verification of scopes or app roles](https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-protected-web-api-verification-scope-app-roles)
 
+## Blazor
+- [Server](https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-blazor-server)
+
 ## Other samples
 
 - [On Behalf Of flow](https://github.com/dzimchuk/azure-ad-on-behalf-of-flow)
