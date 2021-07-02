@@ -29,4 +29,5 @@
 ## Other samples
 
 - [On Behalf Of flow](https://github.com/dzimchuk/azure-ad-on-behalf-of-flow)
+- [B2C](https://github.com/dzimchuk/azure-ad-b2c-asp-net-core)
 
