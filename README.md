@@ -25,6 +25,8 @@
 
 ## Blazor
 - [Server](https://docs.microsoft.com/en-us/azure/active-directory/develop/tutorial-blazor-server)
+- [HostedAAD](https://docs.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/hosted-with-azure-active-directory?view=aspnetcore-6.0)
+- [StandaloneAAD](https://docs.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/standalone-with-azure-active-directory?view=aspnetcore-6.0)
 
 ## Other samples
 
